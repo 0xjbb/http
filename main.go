@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 )
 
 func main(){
@@ -22,16 +23,24 @@ func main(){
 
 	fmt.Println("[+] Listening on port", *port, "...")
 	fmt.Println("[+] Serving directory:",*serDir)
-	fmt.Println("[+] Uploads directory:")
+	fmt.Println("[+] Uploads directory:")//todo
 
 	http.HandleFunc("/upload", uploadHandler)
 
-
 	http.Handle("/", http.FileServer(http.Dir(*serDir)))
 	host := fmt.Sprintf(":%s", *port)
-	log.Fatal(http.ListenAndServe(host, nil))
+	log.Fatal(http.ListenAndServe(host, logRequest(http.DefaultServeMux)))
 }
 
 func uploadHandler(w http.ResponseWriter, r *http.Request){
 	fmt.Fprintf(w,"test")
+
+}
+
+func logRequest(handler http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ipAddr := strings.Split(r.RemoteAddr, ":")[0]//remote port.
+		fmt.Printf("%s %s %s\n", ipAddr, r.Method, r.URL)
+		handler.ServeHTTP(w, r)
+	})
 }
