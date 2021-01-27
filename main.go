@@ -33,12 +33,24 @@ func main(){
 }
 
 func uploadHandler(w http.ResponseWriter, r *http.Request){
-	fmt.Fprintf(w,"test")
+	r.ParseMultipartForm(32 << 20)
 
+	file, handler, err := r.FormFile("file")
+
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	fmt.Println(handler.Filename)
+	fmt.Println(file)
+	//curl -F file=@test.txt http://localhost:8080/upload
+	fmt.Println("File Uploaded! ")
 }
 
 func logRequest(handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// maybe ignore /uploads?
 		ipAddr := strings.Split(r.RemoteAddr, ":")[0]//remote port.
 		fmt.Printf("%s %s %s\n", ipAddr, r.Method, r.URL)
 		handler.ServeHTTP(w, r)
