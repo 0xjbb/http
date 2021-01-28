@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -37,6 +38,7 @@ func main(){
 	log.Fatal(http.ListenAndServe(host, logRequest(http.DefaultServeMux)))
 }
 
+//curl -F file=@test.txt http://localhost:8080/upload
 func uploadHandler(w http.ResponseWriter, r *http.Request){
 	if r.Method != "POST"{
 		fmt.Fprintf(w, "Send it as post.")
@@ -54,11 +56,19 @@ func uploadHandler(w http.ResponseWriter, r *http.Request){
 	}
 
 	fileName := fmt.Sprintf("%s/%s", *serverDirectory, handler.Filename)
-	fmt.Println(fileName)
-	fmt.Println(handler.Filename)
-	fmt.Println(file)
-	//curl -F file=@test.txt http://localhost:8080/upload
-	fmt.Println("File Uploaded! ")
+
+	fh, err := os.Create(fileName)
+
+	if err != nil{
+		log.Println(err)//?fatal???
+		return
+	}
+	defer fh.Close()
+
+
+	io.Copy(fh, file)
+	ipAddr := strings.Split(r.RemoteAddr, ":")[0]
+	fmt.Printf("%s %s %s\n", ipAddr, "UPLOAD", handler.Filename)
 }
 
 func logRequest(handler http.Handler) http.Handler {
