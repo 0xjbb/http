@@ -33,6 +33,12 @@ func main(){
 }
 
 func uploadHandler(w http.ResponseWriter, r *http.Request){
+	if r.Method != "POST"{
+		fmt.Fprintf(w, "Send it as post.")
+		//todo add an upload form, for an easier time in RDP Sessions.
+		return
+	}
+
 	r.ParseMultipartForm(32 << 20)
 
 	file, handler, err := r.FormFile("file")
@@ -41,6 +47,7 @@ func uploadHandler(w http.ResponseWriter, r *http.Request){
 		log.Println(err)
 		return
 	}
+
 
 	fmt.Println(handler.Filename)
 	fmt.Println(file)
