@@ -33,9 +33,11 @@ You can upload a file with curl
 
 `curl -F file=@test.txt http://10.10.10.10:8080/upload`
 
+This will upload `test.txt` to the directory that is being served.
 
 ### TODO
 
+- Custom uploads directory
 - Add SSL support
 - Custom index
 - Add upload form for easy uploads when using RDP
