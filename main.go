@@ -29,7 +29,7 @@ func main(){
 
 	fmt.Println("[+] Listening on port", *port, "...")
 	fmt.Println("[+] Serving directory:",*serverDirectory)
-	fmt.Println("[+] Uploads directory:")//todo
+	fmt.Println("[+] Uploads directory:",*serverDirectory)//todo
 
 	http.HandleFunc("/upload", uploadHandler)
 
