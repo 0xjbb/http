@@ -9,6 +9,11 @@ import (
 	"strings"
 )
 
+var(
+	serverDirectory *string
+
+)
+
 func main(){
 	dir,err  := os.Getwd()
 
@@ -17,17 +22,17 @@ func main(){
 	}
 
 	port := flag.String("p", "8080", "Listening port.")
-	serDir := flag.String("d", dir, "Serve directory.")
-	//upload := flag.String("u", dir + "/uploads", "Directory for uploads.")
+	serverDirectory = flag.String("d", dir, "Serve directory.")
+
 	flag.Parse()
 
 	fmt.Println("[+] Listening on port", *port, "...")
-	fmt.Println("[+] Serving directory:",*serDir)
+	fmt.Println("[+] Serving directory:",*serverDirectory)
 	fmt.Println("[+] Uploads directory:")//todo
 
 	http.HandleFunc("/upload", uploadHandler)
 
-	http.Handle("/", http.FileServer(http.Dir(*serDir)))
+	http.Handle("/", http.FileServer(http.Dir(*serverDirectory)))
 	host := fmt.Sprintf(":%s", *port)
 	log.Fatal(http.ListenAndServe(host, logRequest(http.DefaultServeMux)))
 }
@@ -48,7 +53,8 @@ func uploadHandler(w http.ResponseWriter, r *http.Request){
 		return
 	}
 
-
+	fileName := fmt.Sprintf("%s/%s", *serverDirectory, handler.Filename)
+	fmt.Println(fileName)
 	fmt.Println(handler.Filename)
 	fmt.Println(file)
 	//curl -F file=@test.txt http://localhost:8080/upload
