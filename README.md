@@ -20,7 +20,7 @@ go build
 Copy the binary to a directory in your PATH
 
 ```bash
-sudo cp httpserverr /usr/bin/http
+sudo cp http /usr/bin/http
 ```
 
 ### Usage
