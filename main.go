@@ -40,6 +40,10 @@ func main(){
 	host := fmt.Sprintf(":%s", *port)
 
 	if *isTLS {
+		if !checkCerts(*cert, *key){
+			log.Fatal("Check your cert/key file.")
+		}
+
 		log.Fatal(http.ListenAndServeTLS(host, *cert, *key, logRequest(http.DefaultServeMux)))
 	}else{
 		log.Fatal(http.ListenAndServe(host, logRequest(http.DefaultServeMux)))
@@ -86,4 +90,15 @@ func logRequest(handler http.Handler) http.Handler {
 		fmt.Printf("%s %s %s\n", ipAddr, r.Method, r.URL)
 		handler.ServeHTTP(w, r)
 	})
+}
+
+func checkCerts(cert string, key string) bool{
+	if _, err := os.Stat(cert); err == nil{
+		return false
+	}
+	if _, err := os.Stat(key); err == nil{
+		return false
+	}
+
+	return true
 }
