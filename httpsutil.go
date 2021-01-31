@@ -3,6 +3,7 @@
 // license that can be found in the LICENSE file.
 // Generate a self-signed X.509 certificate for a TLS server.
 
+// Slightly modified by me to return the data instead of writing to disk.
 
 package main
 
@@ -139,16 +140,12 @@ func GenerateCert() {
 	}
 
 	certOut, err := os.Create("cert.pem")
-	if err != nil {
-		log.Fatalf("Failed to open cert.pem for writing: %v", err)
-	}
+
 	if err := pem.Encode(certOut, &pem.Block{Type: "CERTIFICATE", Bytes: derBytes}); err != nil {
 		log.Fatalf("Failed to write data to cert.pem: %v", err)
 	}
-	if err := certOut.Close(); err != nil {
-		log.Fatalf("Error closing cert.pem: %v", err)
-	}
-	log.Print("wrote cert.pem\n")
+
+
 
 	keyOut, err := os.OpenFile("key.pem", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
 	if err != nil {
@@ -156,14 +153,9 @@ func GenerateCert() {
 		return
 	}
 	privBytes, err := x509.MarshalPKCS8PrivateKey(priv)
-	if err != nil {
-		log.Fatalf("Unable to marshal private key: %v", err)
-	}
+
 	if err := pem.Encode(keyOut, &pem.Block{Type: "PRIVATE KEY", Bytes: privBytes}); err != nil {
 		log.Fatalf("Failed to write data to key.pem: %v", err)
 	}
-	if err := keyOut.Close(); err != nil {
-		log.Fatalf("Error closing key.pem: %v", err)
-	}
-	log.Print("wrote key.pem\n")
+
 }
