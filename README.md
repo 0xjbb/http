@@ -38,6 +38,6 @@ This will upload `test.txt` to the directory that is being served.
 ### TODO
 
 - Custom uploads directory
-- Add SSL support
+- Auto-Generate SSL Certs without touching disk.
 - Custom index
 - Add upload form for easy uploads when using RDP
