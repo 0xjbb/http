@@ -51,7 +51,7 @@ You can upload a file with curl
 
 #### HTTPS
 
-`curl -F file=@test.txt http://10.10.10.10:8080/upload`
+`curl -F file=@test.txt https://10.10.10.10:8080/upload`
 
 
 This will upload `test.txt` to the directory that is being served.
