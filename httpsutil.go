@@ -8,6 +8,7 @@
 package main
 
 import (
+	"bytes"
 	"crypto/ecdsa"
 	"crypto/ed25519"
 	"crypto/elliptic"
@@ -20,7 +21,6 @@ import (
 	"log"
 	"math/big"
 	"net"
-	"os"
 	"strings"
 	"time"
 )
@@ -48,7 +48,7 @@ func publicKey(priv interface{}) interface{} {
 	}
 }
 
-func GenerateCert() {
+func GenerateCert() ([]byte, []byte, error ){
 	flag.Parse()
 
 	if len(host) == 0 {
@@ -139,23 +139,18 @@ func GenerateCert() {
 		log.Fatalf("Failed to create certificate: %v", err)
 	}
 
-	certOut, err := os.Create("cert.pem")
+	certOut := new(bytes.Buffer)
 
 	if err := pem.Encode(certOut, &pem.Block{Type: "CERTIFICATE", Bytes: derBytes}); err != nil {
 		log.Fatalf("Failed to write data to cert.pem: %v", err)
 	}
 
-
-
-	keyOut, err := os.OpenFile("key.pem", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
-	if err != nil {
-		log.Fatalf("Failed to open key.pem for writing: %v", err)
-		return
-	}
+	keyOut := new(bytes.Buffer)
 	privBytes, err := x509.MarshalPKCS8PrivateKey(priv)
 
 	if err := pem.Encode(keyOut, &pem.Block{Type: "PRIVATE KEY", Bytes: privBytes}); err != nil {
 		log.Fatalf("Failed to write data to key.pem: %v", err)
 	}
 
+	return certOut.Bytes(), keyOut.Bytes(), err
 }

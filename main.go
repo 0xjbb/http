@@ -52,6 +52,8 @@ func main(){
 		}
 
 		server := http.Server{
+			Addr: host,
+			Handler: logRequest(http.DefaultServeMux),
 			TLSConfig: tlsConfig,
 		}
 
