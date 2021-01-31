@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path"
 	"strings"
 )
 
@@ -56,7 +57,6 @@ func main(){
 			Handler: logRequest(http.DefaultServeMux),
 			TLSConfig: tlsConfig,
 		}
-
 		log.Fatal(server.ListenAndServeTLS("",""))
 
 		//log.Fatal(http.ListenAndServeTLS(host, *cert, *key, logRequest(http.DefaultServeMux)))
@@ -82,8 +82,7 @@ func uploadHandler(w http.ResponseWriter, r *http.Request){
 		return
 	}
 
-	fileName := fmt.Sprintf("%s/%s", *serverDirectory, handler.Filename)
-
+	fileName := path.Join(*serverDirectory, path.Base(handler.Filename))
 	fh, err := os.Create(fileName)
 
 	if err != nil{
