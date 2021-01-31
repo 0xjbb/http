@@ -23,6 +23,12 @@ Copy the binary to a directory in your PATH
 sudo cp http /usr/bin/http
 ```
 
+if you wish to use ports lower than 1000 you can add the bind capability 
+
+```bash
+sudo setcap 'cap_net_bind_service=+ep' /usr/bin/http
+```
+
 ### Usage
 
 Navigate to the directory you wish you server via HTTP and execute the binary
