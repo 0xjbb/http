@@ -25,12 +25,14 @@ func main(){
 	port := flag.String("p", "8080", "Listening port.")
 	serverDirectory = flag.String("d", dir, "Serve directory.")
 	isTLS := flag.Bool("tls", false, "Enable HTTPS.")
+	cert := flag.String("c", "", "Cert File for HTTPS.")
+	key := flag.String("k", "", "Key File for HTTPS.")
 
 	flag.Parse()
 
 	fmt.Println("[+] Listening on port", *port, "...")
-	fmt.Println("[+] Serving directory:",*serverDirectory)
-	fmt.Println("[+] Uploads directory:",*serverDirectory)//todo
+	fmt.Println("[+] Serving directory:", *serverDirectory)
+	fmt.Println("[+] Uploads directory:", *serverDirectory)//todo
 
 	http.HandleFunc("/upload", uploadHandler)
 
@@ -38,8 +40,7 @@ func main(){
 	host := fmt.Sprintf(":%s", *port)
 
 	if *isTLS {
-		cert, key := GenerateCerts()
-		log.Fatal(http.ListenAndServeTLS(host, cert, key, logRequest(http.DefaultServeMux)))
+		log.Fatal(http.ListenAndServeTLS(host, *cert, *key, logRequest(http.DefaultServeMux)))
 	}else{
 		log.Fatal(http.ListenAndServe(host, logRequest(http.DefaultServeMux)))
 	}
@@ -85,9 +86,4 @@ func logRequest(handler http.Handler) http.Handler {
 		fmt.Printf("%s %s %s\n", ipAddr, r.Method, r.URL)
 		handler.ServeHTTP(w, r)
 	})
-}
-
-func GenerateCerts() (cert string, key string){
-
-	return "",""
 }
