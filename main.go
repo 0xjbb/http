@@ -24,6 +24,7 @@ func main(){
 
 	port := flag.String("p", "8080", "Listening port.")
 	serverDirectory = flag.String("d", dir, "Serve directory.")
+	isTLS := flag.Bool("tls", false, "Enable HTTPS.")
 
 	flag.Parse()
 
@@ -35,13 +36,19 @@ func main(){
 
 	http.Handle("/", http.FileServer(http.Dir(*serverDirectory)))
 	host := fmt.Sprintf(":%s", *port)
-	log.Fatal(http.ListenAndServe(host, logRequest(http.DefaultServeMux)))
+
+	if *isTLS {
+		cert, key := GenerateCerts()
+		log.Fatal(http.ListenAndServeTLS(host, cert, key, logRequest(http.DefaultServeMux)))
+	}else{
+		log.Fatal(http.ListenAndServe(host, logRequest(http.DefaultServeMux)))
+	}
 }
 
 //curl -F file=@test.txt http://localhost:8080/upload
 func uploadHandler(w http.ResponseWriter, r *http.Request){
 	if r.Method != "POST"{
-		fmt.Fprintf(w, "Send it as post.")
+		w.Write([]byte("Send it as post."))
 		//todo add an upload form, for an easier time in RDP Sessions.
 		return
 	}
@@ -78,4 +85,9 @@ func logRequest(handler http.Handler) http.Handler {
 		fmt.Printf("%s %s %s\n", ipAddr, r.Method, r.URL)
 		handler.ServeHTTP(w, r)
 	})
+}
+
+func GenerateCerts() (cert string, key string){
+
+	return "",""
 }
