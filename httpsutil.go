@@ -17,7 +17,6 @@ import (
 	"crypto/x509"
 	"crypto/x509/pkix"
 	"encoding/pem"
-	"flag"
 	"log"
 	"math/big"
 	"net"
@@ -49,8 +48,6 @@ func publicKey(priv interface{}) interface{} {
 }
 
 func GenerateCert() ([]byte, []byte, error ){
-	flag.Parse()
-
 	if len(host) == 0 {
 		log.Fatalf("Missing required --host parameter")
 	}

@@ -35,7 +35,14 @@ Navigate to the directory you wish you server via HTTP and execute the binary
 
 You can upload a file with curl
 
+### HTTP
+
 `curl -F file=@test.txt http://10.10.10.10:8080/upload`
+
+### HTTPS
+
+`curl -F file=@test.txt http://10.10.10.10:8080/upload`
+
 
 This will upload `test.txt` to the directory that is being served.
 
