@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"flag"
 	"fmt"
 	"io"
@@ -25,8 +26,6 @@ func main(){
 	port := flag.String("p", "8080", "Listening port.")
 	serverDirectory = flag.String("d", dir, "Serve directory.")
 	isTLS := flag.Bool("tls", false, "Enable HTTPS.")
-	cert := flag.String("c", "", "Cert File for HTTPS.")
-	key := flag.String("k", "", "Key File for HTTPS.")
 
 	flag.Parse()
 
@@ -39,12 +38,26 @@ func main(){
 	http.Handle("/", http.FileServer(http.Dir(*serverDirectory)))
 	host := fmt.Sprintf(":%s", *port)
 
+
 	if *isTLS {
-		if !checkCerts(*cert, *key){
-			log.Fatal("Check your cert/key file.")
+		cert, key, err := GenerateCert()
+		if err != nil{
+			log.Fatal(err)
 		}
 
-		log.Fatal(http.ListenAndServeTLS(host, *cert, *key, logRequest(http.DefaultServeMux)))
+		fcert, err := tls.X509KeyPair(cert, key)
+
+		tlsConfig := &tls.Config{
+			Certificates: []tls.Certificate{fcert},
+		}
+
+		server := http.Server{
+			TLSConfig: tlsConfig,
+		}
+
+		log.Fatal(server.ListenAndServeTLS("",""))
+
+		//log.Fatal(http.ListenAndServeTLS(host, *cert, *key, logRequest(http.DefaultServeMux)))
 	}else{
 		log.Fatal(http.ListenAndServe(host, logRequest(http.DefaultServeMux)))
 	}
@@ -92,13 +105,3 @@ func logRequest(handler http.Handler) http.Handler {
 	})
 }
 
-func checkCerts(cert string, key string) bool{
-	if _, err := os.Stat(cert); err == nil{
-		return false
-	}
-	if _, err := os.Stat(key); err == nil{
-		return false
-	}
-
-	return true
-}
