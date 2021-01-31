@@ -27,19 +27,23 @@ sudo cp http /usr/bin/http
 
 Navigate to the directory you wish you server via HTTP and execute the binary
 
-### HTTPs 
+if you wish to set a custom port you can do so with -p
 
+`http -p 80`
 
+if you wish to use https you can use -tls
+
+`http -tls`
 
 ## Upload
 
 You can upload a file with curl
 
-### HTTP
+#### HTTP
 
 `curl -F file=@test.txt http://10.10.10.10:8080/upload`
 
-### HTTPS
+#### HTTPS
 
 `curl -F file=@test.txt http://10.10.10.10:8080/upload`
 
