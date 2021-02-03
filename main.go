@@ -66,13 +66,19 @@ func main(){
 //curl -F file=@test.txt http://localhost:8080/upload
 func uploadHandler(w http.ResponseWriter, r *http.Request){
 	if r.Method != "POST"{
+
 		w.Write([]byte(`
-			<html><head><title>Upload</title></head><body>
+			<html>
+			<head>
+				<title>Upload</title>
+			</head>
+			<body>
 			<form enctype="multipart/form-data" action="/upload" method="POST">
 				<input type="file" name="file" />
 				<input type="submit" value="upload" />
 			</form>
-			</body></html>
+			</body>
+			</html>
 		`))
 		return
 	}
