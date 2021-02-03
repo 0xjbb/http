@@ -105,6 +105,7 @@ func uploadHandler(w http.ResponseWriter, r *http.Request){
 	io.Copy(fh, file)
 	ipAddr := strings.Split(r.RemoteAddr, ":")[0]
 	fmt.Printf("%s %s %s\n", ipAddr, "UPLOAD", handler.Filename)
+	w.Write([]byte("File uploaded."))
 }
 
 func logRequest(handler http.Handler) http.Handler {
