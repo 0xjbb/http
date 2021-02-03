@@ -66,5 +66,4 @@ This will upload `test.txt` to the directory that is being served.
 
 ### TODO
 
-- Custom uploads directory
 - Custom index
