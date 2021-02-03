@@ -6,9 +6,9 @@ Simple HTTP File server with upload support for pen-testing CTFs
 
 - Simple
 - Easy file uploads
+- Custom uploads directory  
 - HTTP & HTTPS
 - Auto generation of SSL certs
-
 
 ## Getting Started
 
