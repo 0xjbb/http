@@ -27,21 +27,21 @@ func main(){
 
 	port := flag.String("p", "8080", "Listening port.")
 	serverDirectory = flag.String("d", dir, "Serve directory.")
-	uploadDirectory = flag.String("u", "", "Custom uploads directory ( Default is CWD )")
+	uploadDirectory = flag.String("u", dir, "Custom uploads directory ( Default is CWD )")
 	isTLS := flag.Bool("tls", false, "Enable HTTPS.")
 
 	flag.Parse()
 
 	fmt.Println("[+] Listening on port", *port, "...")
 	fmt.Println("[+] Serving directory:", *serverDirectory)
-	fmt.Println("[+] Uploads directory:", *uploadDirectory)//todo
+	fmt.Println("[+] Uploads directory:", *uploadDirectory)
 
 	http.HandleFunc("/upload", uploadHandler)
 
 	http.Handle("/", http.FileServer(http.Dir(*serverDirectory)))
 	host := fmt.Sprintf(":%s", *port)
 
-
+	// TODO clean this bit up
 	if *isTLS {
 		cert, key, err := GenerateCert()
 		if err != nil{
@@ -94,13 +94,7 @@ func uploadHandler(w http.ResponseWriter, r *http.Request){
 		return
 	}
 
-	uploadDir := *serverDirectory
-
-	if *uploadDirectory != ""{
-		uploadDir = *uploadDirectory
-	}
-
-	fileName := path.Join(uploadDir, path.Base(handler.Filename))
+	fileName := path.Join(*uploadDirectory, path.Base(handler.Filename))
 	fh, err := os.Create(fileName)
 	defer fh.Close()
 
@@ -111,7 +105,7 @@ func uploadHandler(w http.ResponseWriter, r *http.Request){
 
 	io.Copy(fh, file)
 	ipAddr := strings.Split(r.RemoteAddr, ":")[0]
-	fmt.Printf("%s %s %s\n", ipAddr, "UPLOAD", handler.Filename)
+	fmt.Printf("%s %s %s %s", ipAddr, "UPLOAD", handler.Filename, fileName)
 	w.Write([]byte("File uploaded."))
 }
 
