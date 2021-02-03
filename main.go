@@ -14,6 +14,7 @@ import (
 
 var(
 	serverDirectory *string
+	uploadDirectory *string
 
 )
 
@@ -26,6 +27,7 @@ func main(){
 
 	port := flag.String("p", "8080", "Listening port.")
 	serverDirectory = flag.String("d", dir, "Serve directory.")
+	uploadDirectory = flag.String("u", "", "Custom uploads directory ( Default is CWD )")
 	isTLS := flag.Bool("tls", false, "Enable HTTPS.")
 
 	flag.Parse()
@@ -92,7 +94,13 @@ func uploadHandler(w http.ResponseWriter, r *http.Request){
 		return
 	}
 
-	fileName := path.Join(*serverDirectory, path.Base(handler.Filename))
+	uploadDir := *serverDirectory
+
+	if *uploadDirectory != ""{
+		uploadDir = *uploadDirectory
+	}
+
+	fileName := path.Join(uploadDir, path.Base(handler.Filename))
 	fh, err := os.Create(fileName)
 	defer fh.Close()
 
@@ -100,7 +108,6 @@ func uploadHandler(w http.ResponseWriter, r *http.Request){
 		log.Println(err)//?fatal???
 		return
 	}
-
 
 	io.Copy(fh, file)
 	ipAddr := strings.Split(r.RemoteAddr, ":")[0]
@@ -111,9 +118,8 @@ func uploadHandler(w http.ResponseWriter, r *http.Request){
 func logRequest(handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// maybe ignore /uploads?
-		ipAddr := strings.Split(r.RemoteAddr, ":")[0]//remote port.
+		ipAddr := strings.Split(r.RemoteAddr, ":")[0]//remove remote port.
 		fmt.Printf("%s %s %s\n", ipAddr, r.Method, r.URL)
 		handler.ServeHTTP(w, r)
 	})
 }
-
