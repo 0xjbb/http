@@ -58,8 +58,6 @@ func main(){
 			TLSConfig: tlsConfig,
 		}
 		log.Fatal(server.ListenAndServeTLS("",""))
-
-		//log.Fatal(http.ListenAndServeTLS(host, *cert, *key, logRequest(http.DefaultServeMux)))
 	}else{
 		log.Fatal(http.ListenAndServe(host, logRequest(http.DefaultServeMux)))
 	}
@@ -68,8 +66,14 @@ func main(){
 //curl -F file=@test.txt http://localhost:8080/upload
 func uploadHandler(w http.ResponseWriter, r *http.Request){
 	if r.Method != "POST"{
-		w.Write([]byte("Send it as post."))
-		//todo add an upload form, for an easier time in RDP Sessions.
+		w.Write([]byte(`
+			<html><head><title>Upload</title></head><body>
+			<form enctype="multipart/form-data" action="/upload" method="POST">
+				<input type="file" name="file" />
+				<input type="submit" value="upload" />
+			</form>
+			</body></html>
+		`))
 		return
 	}
 
