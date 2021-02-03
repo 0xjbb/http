@@ -110,7 +110,6 @@ func uploadHandler(w http.ResponseWriter, r *http.Request){
 
 func logRequest(handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// maybe ignore /uploads?
 		ipAddr := strings.Split(r.RemoteAddr, ":")[0]//remove remote port.
 		fmt.Printf("%s %s %s\n", ipAddr, r.Method, r.URL)
 		handler.ServeHTTP(w, r)
