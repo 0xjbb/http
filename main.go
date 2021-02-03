@@ -15,7 +15,6 @@ import (
 var(
 	serverDirectory *string
 	uploadDirectory *string
-
 )
 
 func main(){
