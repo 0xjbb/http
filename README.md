@@ -23,6 +23,12 @@ Copy the binary to a directory in your PATH
 sudo cp http /usr/bin/http
 ```
 
+if you wish to use ports lower than 1000 you can add the bind capability 
+
+```bash
+sudo setcap 'cap_net_bind_service=+ep' /usr/bin/http
+```
+
 ### Usage
 
 Navigate to the directory you wish you server via HTTP and execute the binary
@@ -45,7 +51,7 @@ You can upload a file with curl
 
 #### HTTPS
 
-`curl -F file=@test.txt http://10.10.10.10:8080/upload`
+`curl -F file=@test.txt https://10.10.10.10:8080/upload`
 
 
 This will upload `test.txt` to the directory that is being served.
