@@ -2,6 +2,14 @@
 
 Simple HTTP File server with upload support for pen-testing CTFs
 
+## Features
+
+- Simple
+- Easy file uploads
+- HTTP & HTTPS
+- Auto generation of SSL certs
+
+
 ## Getting Started
 
 ### Installation
@@ -60,4 +68,3 @@ This will upload `test.txt` to the directory that is being served.
 
 - Custom uploads directory
 - Custom index
-- Add upload form for easy uploads when using RDP

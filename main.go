@@ -88,12 +88,12 @@ func uploadHandler(w http.ResponseWriter, r *http.Request){
 
 	fileName := path.Join(*serverDirectory, path.Base(handler.Filename))
 	fh, err := os.Create(fileName)
+	defer fh.Close()
 
 	if err != nil{
 		log.Println(err)//?fatal???
 		return
 	}
-	defer fh.Close()
 
 
 	io.Copy(fh, file)
