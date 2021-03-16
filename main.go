@@ -12,15 +12,15 @@ import (
 	"strings"
 )
 
-var(
+var (
 	serverDirectory *string
 	uploadDirectory *string
 )
 
-func main(){
-	dir,err  := os.Getwd()
+func main() {
+	dir, err := os.Getwd()
 
-	if err != nil{
+	if err != nil {
 		log.Fatal(err)
 	}
 
@@ -34,16 +34,16 @@ func main(){
 	fmt.Println("[+] Listening on port", *port, "...")
 	fmt.Println("[+] Serving directory:", *serverDirectory)
 	fmt.Println("[+] Uploads directory:", *uploadDirectory)
-
 	http.HandleFunc("/upload", uploadHandler)
 
+	//CustomFileServer(http.Dir(*serverDirectory))
 	http.Handle("/", http.FileServer(http.Dir(*serverDirectory)))
 	host := fmt.Sprintf(":%s", *port)
 
 	// TODO clean this bit up
 	if *isTLS {
 		cert, key, err := GenerateCert()
-		if err != nil{
+		if err != nil {
 			log.Fatal(err)
 		}
 
@@ -54,19 +54,19 @@ func main(){
 		}
 
 		server := http.Server{
-			Addr: host,
-			Handler: logRequest(http.DefaultServeMux),
+			Addr:      host,
+			Handler:   logRequest(http.DefaultServeMux),
 			TLSConfig: tlsConfig,
 		}
-		log.Fatal(server.ListenAndServeTLS("",""))
-	}else{
+		log.Fatal(server.ListenAndServeTLS("", ""))
+	} else {
 		log.Fatal(http.ListenAndServe(host, logRequest(http.DefaultServeMux)))
 	}
 }
 
 //curl -F file=@test.txt http://localhost:8080/upload
-func uploadHandler(w http.ResponseWriter, r *http.Request){
-	if r.Method != "POST"{
+func uploadHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
 
 		w.Write([]byte(`
 			<html>
@@ -97,8 +97,8 @@ func uploadHandler(w http.ResponseWriter, r *http.Request){
 	fh, err := os.Create(fileName)
 	defer fh.Close()
 
-	if err != nil{
-		log.Println(err)//?fatal???
+	if err != nil {
+		log.Println(err) //?fatal???
 		return
 	}
 
@@ -110,7 +110,7 @@ func uploadHandler(w http.ResponseWriter, r *http.Request){
 
 func logRequest(handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ipAddr := strings.Split(r.RemoteAddr, ":")[0]//remove remote port.
+		ipAddr := strings.Split(r.RemoteAddr, ":")[0] //remove remote port.
 		fmt.Printf("%s %s %s\n", ipAddr, r.Method, r.URL)
 		handler.ServeHTTP(w, r)
 	})

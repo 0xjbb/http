@@ -25,13 +25,13 @@ import (
 )
 
 var (
-	host       = "localhost"					// Comma-separated hostnames and IPs to generate a certificate for
-	validFrom  = ""					// Creation date formatted as Jan 1 15:04:05 2011
-	validFor   = 365*24*time.Hour	// Duration that certificate is valid for
-	isCA       = false 				// whether this cert should be its own Certificate Authority
-	rsaBits    = 2048 				// Size of RSA key to generate.
-	ecdsaCurve = ""					// ECDSA curve to use to generate a key. Valid values are P224, P256 (recommended), P384, P521
-	ed25519Key = false 				// Generate an Ed25519 key
+	host       = "localhost"          // Comma-separated hostnames and IPs to generate a certificate for
+	validFrom  = ""                   // Creation date formatted as Jan 1 15:04:05 2011
+	validFor   = 365 * 24 * time.Hour // Duration that certificate is valid for
+	isCA       = false                // whether this cert should be its own Certificate Authority
+	rsaBits    = 2048                 // Size of RSA key to generate.
+	ecdsaCurve = ""                   // ECDSA curve to use to generate a key. Valid values are P224, P256 (recommended), P384, P521
+	ed25519Key = false                // Generate an Ed25519 key
 )
 
 func publicKey(priv interface{}) interface{} {
@@ -47,7 +47,7 @@ func publicKey(priv interface{}) interface{} {
 	}
 }
 
-func GenerateCert() ([]byte, []byte, error ){
+func GenerateCert() ([]byte, []byte, error) {
 	if len(host) == 0 {
 		log.Fatalf("Missing required --host parameter")
 	}
