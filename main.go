@@ -21,7 +21,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	port := flag.String("p", "8080", "Listening port.")
 	serverDirectory = flag.String("d", dir, "Serve directory.")
 	uploadDirectory = flag.String("u", dir, "Custom uploads directory ( Default is CWD )")
@@ -32,10 +31,11 @@ func main() {
 	fmt.Println("[+] Listening on port", *port, "...")
 	fmt.Println("[+] Serving directory:", *serverDirectory)
 	fmt.Println("[+] Uploads directory:", *uploadDirectory)
+
 	http.HandleFunc("/upload", uploadHandler)
 	http.HandleFunc("/shell", shellHandler)
 
-	//CustomFileServer(http.Dir(*serverDirectory))
+	//CustomFileServer(*serverDirectory)
 	http.Handle("/", http.FileServer(http.Dir(*serverDirectory)))
 	host := fmt.Sprintf(":%s", *port)
 
