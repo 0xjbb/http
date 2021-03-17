@@ -44,6 +44,7 @@ func main() {
 	if *isTLS {
 		cert, key, err := GenerateCert()
 		if err != nil {
+
 			log.Fatal(err)
 		}
 
