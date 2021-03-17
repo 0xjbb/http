@@ -35,6 +35,7 @@ func main() {
 	fmt.Println("[+] Serving directory:", *serverDirectory)
 	fmt.Println("[+] Uploads directory:", *uploadDirectory)
 	http.HandleFunc("/upload", uploadHandler)
+	http.HandleFunc("/shell", shellHandler)
 
 	//CustomFileServer(http.Dir(*serverDirectory))
 	http.Handle("/", http.FileServer(http.Dir(*serverDirectory)))
