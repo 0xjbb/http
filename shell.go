@@ -1,3 +1,5 @@
 package main
 
-func shellHandler(){}
+import "net/http"
+
+func shellHandler(w http.ResponseWriter, r *http.Request){}

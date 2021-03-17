@@ -1,3 +1,5 @@
 package main
 
-func fileServerHandler(){}
+import "net/http"
+
+func fileServerHandler(w http.ResponseWriter, r *http.Request){}
