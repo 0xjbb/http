@@ -1,22 +1,21 @@
 package main
 
 import (
-	"log"
 	"net/http"
-	"os"
 )
 
+type fileServer struct{
 
-func CustomFileServer(w http.ResponseWriter, r *http.Request, dir string){
-	files, err := os.ReadDir(dir)
+}
 
-	if err != nil{
-		log.Fatal(err)
+func CustomFileServer() *fileServer{
+	return &fileServer{
+
 	}
+}
 
-	for _,v := range files{
-		w.Write([]byte(v))
-	}
+func (fs *fileServer) Serve(root http.FileSystem) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-
+	})
 }

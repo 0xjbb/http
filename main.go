@@ -4,6 +4,7 @@ import (
 	"crypto/tls"
 	"flag"
 	"fmt"
+	"github.com/gorilla/mux"
 	"log"
 	"net/http"
 	"os"
@@ -13,37 +14,42 @@ import (
 var (
 	serverDirectory *string
 	uploadDirectory *string
+	port *string
+	isTLS *bool
 )
 
-func main() {
+func init(){
 	dir, err := os.Getwd()
 
 	if err != nil {
 		log.Fatal(err)
 	}
-	port := flag.String("p", "8080", "Listening port.")
+	port = flag.String("p", "8080", "Listening port.")
 	serverDirectory = flag.String("d", dir, "Serve directory.")
 	uploadDirectory = flag.String("u", dir, "Custom uploads directory ( Default is CWD )")
-	isTLS := flag.Bool("tls", false, "Enable HTTPS.")
+	isTLS = flag.Bool("tls", false, "Enable HTTPS.")
+}
 
+func main() {
 	flag.Parse()
+	banner()
 
-	fmt.Println("[+] Listening on port", *port, "...")
-	fmt.Println("[+] Serving directory:", *serverDirectory)
-	fmt.Println("[+] Uploads directory:", *uploadDirectory)
+	r := mux.NewRouter()
 
-	http.HandleFunc("/upload", uploadHandler)
-	http.HandleFunc("/shell", shellHandler)
+	r.HandleFunc("/shell", shellHandler)
+	r.HandleFunc("/upload", uploadHandler)
+	//http.HandleFunc("/shell", shellHandler)
+	r.Handle("/", http.FileServer(http.Dir(*serverDirectory)))
+
 
 	//CustomFileServer(*serverDirectory)
-	http.Handle("/", http.FileServer(http.Dir(*serverDirectory)))
+	http.Handle("/", r)
 	host := fmt.Sprintf(":%s", *port)
 
 	// TODO clean this bit up
 	if *isTLS {
 		cert, key, err := GenerateCert()
 		if err != nil {
-
 			log.Fatal(err)
 		}
 
@@ -67,7 +73,14 @@ func main() {
 func logRequest(handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ipAddr := strings.Split(r.RemoteAddr, ":")[0] //remove remote port.
-		fmt.Printf("%s %s %s\n", ipAddr, r.Method, r.URL)
+		fmt.Printf("%s\t%s\t%s\n", ipAddr, r.Method, r.URL)
 		handler.ServeHTTP(w, r)
 	})
+}
+
+func banner(){
+
+	fmt.Println("[+] Listening on port", *port, "...")
+	fmt.Println("[+] Serving directory:", *serverDirectory)
+	fmt.Println("[+] Uploads directory:", *uploadDirectory)
 }
